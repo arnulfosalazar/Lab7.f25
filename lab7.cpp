@@ -11,41 +11,58 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <chrono>
 
+//prototypes
 void initArray(std::string dictionary[], const int WORDS);
 int popArray(std::string dictionary[], const int WORDS, std::ifstream& inFile);
 int counter(std::string dictionary[], const int WORDS);
+void print(std::string dictionary[], const int WORDS);
 
-const bool DEBUG = false;
+//constant variables
+const bool DEBUG = true;
 
 int main() {
-
-	char input;
-	std::cout << "Debug? y/n";
-	std::cin >> input;
-	if (input == 'y') {
-		std::cout << "Welcome to the spell checker, little one!" << std::endl << std::endl;
-	}
-	else if (input == 'n') {
-		std::cout << "Welcome to the spell checker, little one!" << std::endl << std::endl;
-		std::cout << "Loaded " << counter << " words from dictionary."
-	}
-	else {
-		std::cerr << "Invalid input. Debug? y/n";
-	}
-
-	std::ifstream inFile("dictionary.txt");
-
-
+	//initialize constant, array, and open text file to be used
 	const int WORDS = 24500;
 	std::string dictionary[WORDS];
+	std::ifstream inFile("dictionary.txt");
+
+	std::cout << "Welcome to the spell checker, little one!" << std::endl << std::endl;
+
+	
+	auto start = std::chrono::high_resolution_clock::now();
 	initArray(dictionary, WORDS);
+	auto end = std::chrono::high_resolution_clock::now();
+
+	std::chrono::duration<double> elapsed = end - start;
+
+	if (DEBUG) {
+		std::cout << "DEBUG: Initialization took " << elapsed.count() << " microseconds." << std::endl;
+	}
+
+	start = std::chrono::high_resolution_clock::now();
 	popArray(dictionary, WORDS, inFile);
-	counter(dictionary, WORDS);
-	print(dictionary, WORDS);
+	end = std::chrono::high_resolution_clock::now();
+	elapsed = end - start;
+
+	if (DEBUG) {
+		std::cout << "DEBUG: Loading took " << elapsed.count() << " microseconds." << std::endl;
+	}
+
+	if (DEBUG) {
+		start = std::chrono::high_resolution_clock::now();
+		print(dictionary, WORDS);
+		end = std::chrono::high_resolution_clock::now();
+		elapsed = end - start;
+
+		std::cout << "DEBUGGING: Printing took " << elapsed.count() << " microseconds." << std::endl;
+	}
+		
+	std::cout << "Loaded " << counter(dictionary, WORDS) << " words from the dictionary.";
+
+
 	inFile.close();
-
-
 
 	return 0;
 }
@@ -88,4 +105,3 @@ void print(std::string dictionary[], const int WORDS) {
 	}
 	
 }
-
